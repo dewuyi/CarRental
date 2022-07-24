@@ -22,20 +22,20 @@ public class CarContext: DbContext
             new Car
             {
                Id = 1,
-               Category = CarCategoryEnum.Small,
-               Manufacturer = CarManufacturer.Bmw,
+               Category = CarCategoryEnum.Small.ToString(),
+               Manufacturer = CarManufacturer.Bmw.ToString(),
                Name = "BMW X5",
-               Status = RentalStatus.Available,
+               Status = RentalStatus.Available.ToString(),
                Stock = 20,
                Price = 50
             },
             new Car
             {
                 Id = 2,
-                Category = CarCategoryEnum.Medium,
-                Manufacturer = CarManufacturer.Toyota,
+                Category = CarCategoryEnum.Medium.ToString(),
+                Manufacturer = CarManufacturer.Toyota.ToString(),
                 Name = "Land Cruiser",
-                Status = RentalStatus.Available,
+                Status = RentalStatus.Available.ToString(),
                 Stock = 10,
                 Price = 40
             }

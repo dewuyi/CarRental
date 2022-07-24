@@ -4,6 +4,11 @@ public class PaginationFilter
 {
     public int PageNumber { get; }
     public int PageSize { get; }
+    public PaginationFilter()
+    {
+        PageNumber = 1;
+        PageSize = 10;
+    }
     public PaginationFilter(int pageNumber, int pageSize)
     {
         PageNumber = pageNumber < 1 ? 1 : pageNumber;

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRental.Migrations
 {
     [DbContext(typeof(CarContext))]
-    [Migration("20220720210504_initial")]
+    [Migration("20220724212606_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,17 +32,28 @@ namespace CarRental.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Manufacturer")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
+                    b.Property<string>("Manufacturer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Stock")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -53,25 +64,32 @@ namespace CarRental.Migrations
                         new
                         {
                             Id = 1,
-                            Category = 1,
-                            Manufacturer = 1,
+                            Category = "Small",
+                            Manufacturer = "Bmw",
                             Name = "BMW X5",
-                            Status = 0
+                            Price = 50m,
+                            Status = "Available",
+                            Stock = 20
                         },
                         new
                         {
                             Id = 2,
-                            Category = 2,
-                            Manufacturer = 2,
+                            Category = "Medium",
+                            Manufacturer = "Toyota",
                             Name = "Land Cruiser",
-                            Status = 0
+                            Price = 40m,
+                            Status = "Available",
+                            Stock = 10
                         });
                 });
 
             modelBuilder.Entity("CarRental.Model.CarCategory", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -111,6 +129,14 @@ namespace CarRental.Migrations
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CustomerEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("RentalEnd")
                         .HasColumnType("datetime2");
 
@@ -119,7 +145,54 @@ namespace CarRental.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CarRental");
+                    b.HasIndex("CarId");
+
+                    b.ToTable("CarRentals");
+                });
+
+            modelBuilder.Entity("CarRental.Model.User", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Name = "user1",
+                            Password = "password1"
+                        },
+                        new
+                        {
+                            Name = "user2",
+                            Password = "password2"
+                        },
+                        new
+                        {
+                            Name = "user3",
+                            Password = "password3"
+                        });
+                });
+
+            modelBuilder.Entity("CarRental.Model.Rental", b =>
+                {
+                    b.HasOne("CarRental.Model.Car", null)
+                        .WithMany("Rentals")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CarRental.Model.Car", b =>
+                {
+                    b.Navigation("Rentals");
                 });
 #pragma warning restore 612, 618
         }

@@ -15,16 +15,18 @@ public class CarRentalController :ControllerBase
     private readonly ICarRepository _carRepository;
     private readonly ICarCategoryRepository _carCategoryRepository;
     private readonly IRentalRepository _rentalRepository;
+    private readonly IUserRepository _userRepository;
 
     public CarRentalController(IJwtManagerRepository jwtManager,
         ICarRepository carRepository,
         ICarCategoryRepository carCategoryRepository,
-        IRentalRepository rentalRepository)
+        IRentalRepository rentalRepository, IUserRepository userRepository)
     {
         _jwtManager = jwtManager;
         _carRepository = carRepository;
         _carCategoryRepository = carCategoryRepository;
         _rentalRepository = rentalRepository;
+        _userRepository = userRepository;
     }
     
     // Get all cars categories
@@ -39,8 +41,12 @@ public class CarRentalController :ControllerBase
     [HttpGet("cars/{manufacturerName}")]
     public async Task<IActionResult> GetCars(string manufacturerName)
     {
-        Enum.TryParse("Active", out CarManufacturer manufacturer);
+        Enum.TryParse(manufacturerName, out CarManufacturer manufacturer);
         var cars = await _carRepository.GetCarsByManufacturerName(manufacturer);
+        if (cars.Count == 0)
+        {
+            return NotFound($"No vehicle manufactured by {manufacturerName} can be found in our system");
+        }
         return Ok(cars);
     }
     
@@ -58,17 +64,26 @@ public class CarRentalController :ControllerBase
     public async Task<IActionResult> GetCar(string vehicleName)
     {
         var car = await _carRepository.GetCarByName(vehicleName);
+        if (car == null)
+        {
+            return NotFound("Vehicle does not exist in our system");
+        }
         return Ok(car);
     }
     
-    // Rent a car
+
     [HttpPost("rent")]
     public async Task<IActionResult> RentCar(RentalRequest rentalRequest)
     {
-        var carId = (await _carRepository.GetCarByName(rentalRequest.VehicleName)).Id;
+        var car = await _carRepository.GetCarByName(rentalRequest.VehicleName);
+        if (car == null)
+        {
+            return NotFound("Vehicle does not exist in our system");
+        }
+        
         var rental = new Rental
         {
-            CarId = carId,
+            CarId = car.Id,
             RentalStart = rentalRequest.RentalStartDate,
             RentalEnd = rentalRequest.RentalStartDate.AddDays(rentalRequest.RentalDurationInDays),
             CustomerName = rentalRequest.CustomerName,
@@ -78,8 +93,19 @@ public class CarRentalController :ControllerBase
         var result = await _rentalRepository.CreateRental(rental);
         if (result != 1)
             return Ok("Unable to rent car");
-        await _carRepository.UpdateCarStock(carId);
-        return Created("", rental);
+        await _carRepository.UpdateCarStock(car.Id);
+        return Created("", $"{car.Name} rented, Due back on {rental.RentalEnd}");
+    }
+
+    [HttpPost("user/register")]
+    public async Task<IActionResult> Register(User user)
+    {
+        var userCreated = await _userRepository.CreateUser(user);
+        if (!userCreated)
+        {
+            return BadRequest("User already exist");
+        }
+        return Created("", $"user {user.Name} created");
     }
 
     [AllowAnonymous]

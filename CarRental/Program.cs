@@ -36,6 +36,7 @@ builder.Services.AddTransient<IJwtManagerRepository, JwtManagerRepository>();
 builder.Services.AddTransient<ICarRepository, CarRepository>();
 builder.Services.AddTransient<ICarCategoryRepository, CarCategoryRepository>();
 builder.Services.AddTransient<IRentalRepository, RentalRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
@@ -43,7 +44,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    var context = services.GetRequiredService<CarContext>();    
+    var context = services.GetRequiredService<CarContext>();
     context.Database.Migrate();
 }
 

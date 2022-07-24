@@ -30,11 +30,13 @@ namespace CarRental.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Manufacturer")
-                        .HasColumnType("int");
+                    b.Property<string>("Manufacturer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -45,8 +47,9 @@ namespace CarRental.Migrations
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Stock")
                         .HasColumnType("int");
@@ -59,21 +62,21 @@ namespace CarRental.Migrations
                         new
                         {
                             Id = 1,
-                            Category = 1,
-                            Manufacturer = 1,
+                            Category = "Small",
+                            Manufacturer = "Bmw",
                             Name = "BMW X5",
                             Price = 50m,
-                            Status = 0,
+                            Status = "Available",
                             Stock = 20
                         },
                         new
                         {
                             Id = 2,
-                            Category = 2,
-                            Manufacturer = 2,
+                            Category = "Medium",
+                            Manufacturer = "Toyota",
                             Name = "Land Cruiser",
                             Price = 40m,
-                            Status = 0,
+                            Status = "Available",
                             Stock = 10
                         });
                 });
@@ -123,6 +126,14 @@ namespace CarRental.Migrations
 
                     b.Property<int>("CarId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CustomerEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RentalEnd")
                         .HasColumnType("datetime2");

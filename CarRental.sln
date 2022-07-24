@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalTests", "CarRental
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService", "NotificationService\NotificationService.csproj", "{43E8968E-02FA-4EE2-8644-52F28182603C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationServiceTests", "NotificationServiceTests\NotificationServiceTests.csproj", "{F69CF6F9-0CD5-4EF2-BF18-44492C541765}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{43E8968E-02FA-4EE2-8644-52F28182603C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43E8968E-02FA-4EE2-8644-52F28182603C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43E8968E-02FA-4EE2-8644-52F28182603C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F69CF6F9-0CD5-4EF2-BF18-44492C541765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F69CF6F9-0CD5-4EF2-BF18-44492C541765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F69CF6F9-0CD5-4EF2-BF18-44492C541765}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F69CF6F9-0CD5-4EF2-BF18-44492C541765}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
