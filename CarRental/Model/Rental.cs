@@ -9,5 +9,7 @@ public class Rental
     public DateTime RentalEnd { get; set; }
     [ForeignKey("Car")]
     public int CarId { get; set; }
-    public Car Car { get; set; }
+    
+    public string CustomerEmail { get; set; }
+    public string CustomerName { get; set; }
 }

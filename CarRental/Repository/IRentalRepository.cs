@@ -1,6 +1,9 @@
+using CarRental.Model;
+
 namespace CarRental.Repository;
 
-public class IRentalRepository
+public interface IRentalRepository
 {
-    
+    Task<int> CreateRental(Rental rental);
+    Task<List<Rental>> GetExpiringRental();
 }

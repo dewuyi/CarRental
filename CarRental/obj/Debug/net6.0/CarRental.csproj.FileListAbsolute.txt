@@ -59,3 +59,4 @@ C:\Users\banji\RiderProjects\CarRental\CarRental\obj\Debug\net6.0\CarRental.dll
 C:\Users\banji\RiderProjects\CarRental\CarRental\obj\Debug\net6.0\ref\CarRental.dll
 C:\Users\banji\RiderProjects\CarRental\CarRental\obj\Debug\net6.0\CarRental.pdb
 C:\Users\banji\RiderProjects\CarRental\CarRental\obj\Debug\net6.0\CarRental.genruntimeconfig.cache
+C:\Users\banji\RiderProjects\CarRental\CarRental\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

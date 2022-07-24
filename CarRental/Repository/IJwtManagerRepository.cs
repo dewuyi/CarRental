@@ -1,6 +1,8 @@
+using CarRental.Model;
+
 namespace CarRental.Repository;
 
-public interface IJWTManagerRepository
+public interface IJwtManagerRepository
 {
-    
+    Tokens Authenticate(User users);
 }

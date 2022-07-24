@@ -1,6 +1,8 @@
+using CarRental.Model;
+
 namespace CarRental.Repository;
 
-public class ICarCategoryRepository
+public interface ICarCategoryRepository
 {
-    
+    Task<List<CarCategory>> GetAllCategories();
 }
