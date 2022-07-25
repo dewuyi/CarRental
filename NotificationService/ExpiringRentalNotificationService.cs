@@ -2,29 +2,26 @@ using CarRental.Model;
 using CarRental.Repository;
 using Coravel.Invocable;
 using Microsoft.Extensions.Options;
-using SendGrid;
 using SendGrid.Helpers.Mail;
 
 namespace NotificationService;
 
-public class MailService:IInvocable
+public class ExpiringRentalNotificationService:IInvocable
 {
     private readonly IRentalRepository _rentalRepository;
+    private readonly IEmailService _emailService;
     private readonly Settings _settings;
-    private Queue<NotificationMessage> _messagesToSend;
-    private SendGridClient _client;
+    private Queue<NotificationMessage> _messagesQueue = new();
     private IEnumerable<Rental> _rentalCache;
     private DateTime _rentalCacheLastUpdate = DateTime.MinValue;
-    public MailService(IRentalRepository rentalRepository, 
+    public ExpiringRentalNotificationService(IRentalRepository rentalRepository, 
         IOptions<Settings> settings,
-        Queue<NotificationMessage> messagesToSend, 
-        IEnumerable<Rental> rentalCache)
+        IEnumerable<Rental> rentalCache, IEmailService emailService)
     {
         _rentalRepository = rentalRepository;
-        _messagesToSend = messagesToSend;
         _rentalCache = rentalCache;
+        _emailService = emailService;
         _settings = settings.Value;
-        _client = new SendGridClient(_settings.SendGridApiKey);
     }
 
     public async Task Invoke()
@@ -49,7 +46,7 @@ public class MailService:IInvocable
                      CustomerName = rental.CustomerName
                  }))
         {
-            _messagesToSend.Enqueue(notificationMessage);
+            _messagesQueue.Enqueue(notificationMessage);
         }
 
         await SendMessages();
@@ -57,13 +54,14 @@ public class MailService:IInvocable
 
     private async Task SendMessages()
     {
-        foreach (var message in _messagesToSend)
+        Queue<NotificationMessage> messageToSend = new Queue<NotificationMessage>(_messagesQueue);
+        foreach (var message in messageToSend)
         {
             message.Message.AddTo(new EmailAddress(message.CustomerEmail, message.CustomerName));
-            var response = await _client.SendEmailAsync(message.Message);
+            var response = await _emailService.SendEmail(message.Message);
             if (response.IsSuccessStatusCode)
             {
-                _messagesToSend.Dequeue();
+                _messagesQueue.Dequeue();
             }
         }
     }
