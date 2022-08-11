@@ -2,6 +2,7 @@ using CarRental.Model;
 using CarRental.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using User = CarRental.Model.User;
 
 namespace CarRental.Controllers;
 
@@ -13,20 +14,23 @@ public class CarRentalController :ControllerBase
 {
     private readonly IJwtManagerRepository _jwtManager;
     private readonly ICarRepository _carRepository;
-    private readonly ICarCategoryRepository _carCategoryRepository;
     private readonly IRentalRepository _rentalRepository;
     private readonly IUserRepository _userRepository;
+    private readonly ILogger<CarRentalController> _logger;
+    private readonly ICarCategoryRepository _carCategoryRepository;
 
     public CarRentalController(IJwtManagerRepository jwtManager,
         ICarRepository carRepository,
-        ICarCategoryRepository carCategoryRepository,
-        IRentalRepository rentalRepository, IUserRepository userRepository)
+        IUserRepository userRepository,
+        ILogger<CarRentalController> logger, 
+         IRentalRepository rentalRepository, ICarCategoryRepository carCategoryRepository)
     {
         _jwtManager = jwtManager;
         _carRepository = carRepository;
-        _carCategoryRepository = carCategoryRepository;
-        _rentalRepository = rentalRepository;
         _userRepository = userRepository;
+        _logger = logger;
+        _rentalRepository = rentalRepository;
+        _carCategoryRepository = carCategoryRepository;
     }
     
     // Get all cars categories
@@ -54,6 +58,7 @@ public class CarRentalController :ControllerBase
     [HttpGet("cars")]
     public async Task<IActionResult> GetAllCars([FromQuery] PaginationFilter filter)
     {
+        _logger.LogInformation($"Fetching all cars currently rented at {DateTime.Now}");
         var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
         var cars = await _carRepository.GetAllCars(validFilter);
         return Ok(cars);
@@ -80,8 +85,8 @@ public class CarRentalController :ControllerBase
         {
             return NotFound("Vehicle does not exist in our system");
         }
-        
-        var rental = new Rental
+
+        var rental = new Rental()
         {
             CarId = car.Id,
             RentalStart = rentalRequest.RentalStartDate,
@@ -89,6 +94,7 @@ public class CarRentalController :ControllerBase
             CustomerName = rentalRequest.CustomerName,
             CustomerEmail = rentalRequest.CustomerEmail
         };
+        
         
         var result = await _rentalRepository.CreateRental(rental);
         if (result != 1)
